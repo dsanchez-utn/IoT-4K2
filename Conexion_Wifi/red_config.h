@@ -1,2 +1,2 @@
-const char* SSID = "ACNET2";
+const char* SSID = "";
 const char* PASS = "";
