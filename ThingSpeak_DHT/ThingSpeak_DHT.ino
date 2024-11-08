@@ -1,15 +1,14 @@
-#include "ThingSpeak.h"
-#include "WiFi.h"
-
-#include "DHT.h"
+#include <ThingSpeak.h>
+#include <WiFi.h>
+#include <DHT.h>
 
 #define pinDHT 33    //Pin del sensor
 
 const char* ssid = "";
 const char* password = "";
 
-unsigned long channelID = 99999999;
-const char* WriteAPIKey = "API KEY";
+unsigned long channelID = 2274848;
+const char* WriteAPIKey = "FXPPV47A789VL2A7";
 
 // Timer
 unsigned long lastTime = 0;
@@ -32,7 +31,6 @@ void setup() {
   Serial.println("Wifi conectado!");
 
   ThingSpeak.begin(cliente);
-
   dht.begin();
 
 }
@@ -42,9 +40,12 @@ void loop() {
   if ((millis() - lastTime) > timerDelay) {
     leerdht();
 
-    ThingSpeak.writeFields(channelID,WriteAPIKey);
-    Serial.println("Datos enviados a ThingSpeak!");
-
+    int code = ThingSpeak.writeFields(channelID,WriteAPIKey);
+    if(code==200)
+      Serial.println("Canal de ThingSpeak actualizado correctamente.");
+    else
+      Serial.println("No se pudo actualizar el canal. Error HTTP: " + String(code));
+    
     lastTime = millis();
   }
 }
@@ -60,7 +61,7 @@ void leerdht() {
     t2 = dht.readTemperature();
     h2 = dht.readHumidity();
   }
-
+  Serial.println("------------------------------");
   Serial.print("Temperatura DHT22: ");
   Serial.print(t2);
   Serial.println(" ºC.");
@@ -69,9 +70,18 @@ void leerdht() {
   Serial.print(h2);
   Serial.println(" %."); 
 
-  Serial.println("-----------------------");
+  int rand = random(1,100);
 
+  String status;
+  if(t2 > 30) 
+    status = "Temperatura Alta";
+  else if (t2 > 20)
+    status = "Temperatura Media";
+  else 
+    status = "Temperatura Baja";
+
+  ThingSpeak.setField (1,rand);
   ThingSpeak.setField (2,t2);
   ThingSpeak.setField (3,h2);
-
+  ThingSpeak.setStatus(status);
 }
