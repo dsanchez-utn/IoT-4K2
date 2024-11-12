@@ -5,8 +5,8 @@
 
 #define pinDHT 33    //Pin del sensor
 
-const char* ssid = "dexter3";
-const char* password = "374737473h";
+const char* ssid = "";
+const char* password = "";
 unsigned long channelID = 2510209;
 const char* WriteAPIKey = "FD2HYTOTLFFV1FQE";
 
